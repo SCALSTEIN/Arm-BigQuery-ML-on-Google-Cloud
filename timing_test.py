@@ -38,4 +38,5 @@ duration = time.monotonic() - start_time
 
 print(f"Workload Result Sum: {result}")
 print(f"Key Function Execution Time: {duration:.4f} seconds")
+
 print("--- Performance Test Complete ---")
