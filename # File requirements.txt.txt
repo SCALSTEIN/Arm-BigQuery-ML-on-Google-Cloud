@@ -1,0 +1,5 @@
+# File: requirements.txt
+pandas
+numpy
+psycopg2-binary 
+pydantic

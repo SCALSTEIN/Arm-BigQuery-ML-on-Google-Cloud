@@ -1,0 +1,41 @@
+# File: worker/utils/timing_test.py
+# --------------------------------------------------------------------------
+import time
+import pandas as pd
+import numpy as np
+
+# Simulate the heavy-duty feature engineering function 
+# that benefits most from Arm's architecture (Tau T2A)
+def heavy_feature_engineering(data: pd.DataFrame):
+    """Simulates a complex, CPU-intensive data transformation."""
+    # This involves heavy vector/matrix operations that Python/NumPy/Pandas
+    # will dispatch to the optimized Arm64/NEON kernels.
+    data['new_feature_a'] = data['ticket_price'] * np.log1p(data['click_count'])
+    data['new_feature_b'] = np.sqrt(data['time_to_event']) / data['inventory_level']
+    
+    # Simulate a loop-based task that benefits from native compilation speed
+    result = np.sum(data[['new_feature_a', 'new_feature_b']].values)
+    return result
+
+# --- Performance Logging ---
+print("--- Starting Tau T2A Performance Test ---")
+# Create synthetic data (simulating a batch from Pub/Sub)
+data = pd.DataFrame({
+    'ticket_price': np.random.rand(50000),
+    'click_count': np.random.randint(1, 1000, 50000),
+    'time_to_event': np.random.randint(1, 365, 50000),
+    'inventory_level': np.random.rand(50000)
+})
+
+# Start timer
+start_time = time.monotonic()
+
+# Execute the workload
+result = heavy_feature_engineering(data)
+
+# End timer
+duration = time.monotonic() - start_time
+
+print(f"Workload Result Sum: {result}")
+print(f"Key Function Execution Time: {duration:.4f} seconds")
+print("--- Performance Test Complete ---")

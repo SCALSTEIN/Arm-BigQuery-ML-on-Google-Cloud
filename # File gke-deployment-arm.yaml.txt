@@ -1,0 +1,32 @@
+# File: gke-deployment-arm.yaml
+# --------------------------------------------------------------------------
+# Kubernetes Deployment for the SoldOutAfrica Analytics Worker
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: soldout-analytics-worker-arm
+  labels:
+    app: analytics-worker
+    arch: arm64
+spec:
+  replicas: 5 # Example: Scale-out on cost-efficient Tau T2A cores
+  selector:
+    matchLabels:
+      app: analytics-worker
+  template:
+    metadata:
+      labels:
+        app: analytics-worker
+    spec:
+      # CRITICAL: Node Selector forces scheduling onto Arm64 nodes
+      nodeSelector:
+        kubernetes.io/arch: arm64
+      containers:
+      - name: analytics-processor
+        image: gcr.io/your-gcp-project-id/soldoutafrica-worker:latest-arm64 # Reference the Arm-built Docker image
+        resources:
+          limits:
+            cpu: 2000m
+            memory: 4Gi
+        ports:
+        - containerPort: 8080
